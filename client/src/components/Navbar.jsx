@@ -18,6 +18,7 @@ function Navbar() {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex space-x-6 items-center">
+            <Link to="/admin-dashboard" className="text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-zinc-700 rounded-md px-2 py-1">Constructor</Link>
             <Link to="/" className="text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-zinc-700 rounded-md px-2 py-1">Home</Link>
             <Link to="/all-courses" className="text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-zinc-700 rounded-md px-2 py-1">Courses</Link>
             <Link to="/contact" className="text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-zinc-700 rounded-md px-2 py-1">Contact</Link>
@@ -49,6 +50,7 @@ function Navbar() {
       {/* Mobile Menu Links */}
       {isOpen && (
         <div className="md:hidden px-4 pt-2 pb-4 space-y-2 bg-white dark:bg-gray-900 transition-colors duration-300">
+          <Link to="/admin-dashboard" className="block text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">Constructor</Link>
           <Link to="/" className="block text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">Home</Link>
           <Link to="/all-courses" className="block text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">Courses</Link>
           <Link to="/contact" className="block text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">Contact</Link>
