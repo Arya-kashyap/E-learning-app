@@ -10,12 +10,12 @@ export const userSignup = async (req, res) => {
      const hashPassword = await bcrypt.hash(password, 10);
      try {
           if (!firstName || !lastName || !email || !password) {
-               return res.status(400).json({ messege: "all field are required" })
+               return res.status(400).json({ errors: "all field are required" })
           }
 
           const userAlreadyExist = await User.findOne({ email: email });
           if (userAlreadyExist) {
-               return res.status(400).json({ messege: "user already exist" })
+               return res.status(400).json({ errors: "user already exist" })
           };
 
           const userData = {
@@ -26,9 +26,9 @@ export const userSignup = async (req, res) => {
           }
 
           const user = await User.create(userData);
-          res.status(201).json({ messege: "user signup successfully", user });
+          res.status(201).json({ message: "user signup successfully", user });
      } catch (error) {
-          res.status(400).json({ messege: "error in signup" });
+          res.status(400).json({ errors: "error in signup" });
           console.log(error, "error in signup");
 
      }
@@ -38,10 +38,13 @@ export const userLogin = async (req, res) => {
      const { email, password } = req.body;
      try {
           const user = await User.findOne({ email: email });
+          if(!user){
+               return res.status(403).json({ errors: "User not found" });
+          }
 
           const isPassword = await bcrypt.compare(password, user.password);
           if (!user || !isPassword) {
-               return res.status(403).json({ messege: "invailed crenditial" });
+               return res.status(403).json({ errors: "Invailed crenditial" });
           }
 
           // jwt code
@@ -59,19 +62,20 @@ export const userLogin = async (req, res) => {
                sameSite: "Strict"
           }
           res.cookie("jwt", token, cookiesOption)
-          res.status(200).json({ messege: "login successfully", user, token });
+          res.status(200).json({ message: "Login successfully", user, token });
      } catch (error) {
           console.log(error, "error in login ");
-
+          res.status(400).json({ errors: "error in login" });
      }
 }
 
 export const userLogout = async (req, res) => {
      try {
           res.clearCookie("jwt");
-          res.status(200).json({ messege: "logout successfully" });
+          res.status(200).json({ message: "Logout successfully" });
      } catch (error) {
           console.log("error in logout", error)
+          res.status(400).json({ errors: "error in logout" });
      }
 }
 
@@ -87,9 +91,10 @@ export const purchasedCourse = async (req, res) => {
           const courseData = await Course.find({
                _id: { $in: purchasedCourseId },
           });
-          res.status(200).json({ messege: "All purchased courses", purchase, courseData })
+          res.status(200).json({ message: "All purchased courses", purchase, courseData })
      } catch (error) {
           console.log(error, "error in get purchased course");
+          res.status(400).json({ errors: "error in get purchased course" });
 
      }
 

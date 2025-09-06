@@ -1,24 +1,71 @@
-import React from 'react'
+import axios from 'axios';
+import React, { useEffect, useState } from 'react'
+import toast from 'react-hot-toast';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 
-const myCourses = [
-  {
-    title: 'React Mastery',
-    description: 'Build dynamic UIs with React hooks, context, and routing.',
-    image: 'https://via.placeholder.com/400x200',
-  },
-  {
-    title: 'Node.js Essentials',
-    description: 'Learn backend development with Express and MongoDB.',
-    image: 'https://via.placeholder.com/400x200',
-  },
-  {
-    title: 'Tailwind CSS Pro',
-    description: 'Design responsive, modern UIs with utility-first CSS.',
-    image: 'https://via.placeholder.com/400x200',
-  },
-]
 
 const MyCourses = () => {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [myCourses, setMyCourses] = useState([]);
+
+  const handleDelete = async (courseId) => {
+    const admin = JSON.parse(localStorage.getItem("admin"));
+    const token = admin?.token;
+    console.log(token, "token");
+    if (!token) {
+      navigate("/admin/login");
+      return;
+    }
+    try {
+      const shouldDelete = window.confirm("Are you sure you want to delete this course?");
+      if (!shouldDelete) return;
+      const response = await axios.delete(`${BACKEND_URL}/api/course/delete/${courseId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        withCredentials: true,
+      });
+      toast.success(response.data.message || "Course deleted successfully");
+      navigate("/admin-dashboard/mycourses");
+    } catch (error) {
+      console.log(error);
+      toast.error(error.response?.data?.errors || "Something went wrong");
+    }
+  }
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+
+      const admin = JSON.parse(localStorage.getItem("admin"));
+      const token = admin?.token;
+      console.log(token, "token");
+      if (!token) {
+        navigate("/admin/login");
+        return;
+      }
+
+      try {
+        const response = await axios.post(`${BACKEND_URL}/api/admin/courses`, {}, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true,
+        }
+        );
+        console.log(response.data);
+        setMyCourses(response.data)
+        setLoading(false)
+      } catch (error) {
+        console.log("error in fetchCourses", error);
+      }
+    }
+    fetchCourses()
+  }, [])
+
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-800 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
@@ -44,9 +91,14 @@ const MyCourses = () => {
                 <p className="text-gray-700 dark:text-gray-300 text-sm">
                   {course.description}
                 </p>
-                <button className="mt-4 text-sm px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded transition duration-200">
-                  Continue Learning
-                </button>
+                <div className="flex items-center justify-between mt-4">
+                  <Link to={`/admin-dashboard/updatecourse/${course._id}`} className="mt-4 text-sm px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded transition duration-200">
+                    Update
+                  </Link>
+                  <button onClick={() => handleDelete(course._id)} className="mt-4 text-sm px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded transition duration-200">
+                    Delete
+                  </button>
+                </div>
               </div>
             </div>
           ))}

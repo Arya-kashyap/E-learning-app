@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Dashboard = () => {
+const AdminHome = () => {
   return (
     <main className="flex-1 p-6 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100">
       <h2 className="text-2xl font-semibold mb-4">Welcome, Admin!</h2>
@@ -13,4 +13,4 @@ const Dashboard = () => {
   )
 }
 
-export default Dashboard
+export default AdminHome

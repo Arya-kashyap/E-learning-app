@@ -12,7 +12,7 @@ function Hero() {
         </p>
         <div className="mt-6">
           <Link
-            to="/all-courses"
+            to="/user-dashboard"
             className="inline-block bg-blue-600 dark:bg-blue-500 text-white px-6 py-3 rounded-md text-sm font-semibold hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors duration-200"
           >
             Get Started

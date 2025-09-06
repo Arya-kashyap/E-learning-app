@@ -10,6 +10,7 @@ function adminMiddleware(req, res, next) {
      const token = authHeader.split(" ")[1];
      try {
           const decoded = jwt.verify(token, JWT_ADMIN_PASSWORD)
+          console.log(decoded.id)
           req.adminId = decoded.id
           next();
      } catch (error) {

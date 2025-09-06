@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import { RiAlignLeft } from "react-icons/ri";
 import { Link, Outlet } from 'react-router-dom';
 
-function AdminDashborad() {
+function UserDashboard() {
   const [isOpen, setIsOpen] = useState(false);
 
   const closeSidebar = () => {
@@ -14,10 +14,8 @@ function AdminDashborad() {
       {/* Sidebar */}
       <aside className="hidden md:block w-64 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 p-6 flex-shrink-0">
         <nav className="space-y-4">
-          <Link to="/admin-dashboard" className="block hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md px-2 py-1">Home</Link>
-          <Link to="/admin-dashboard/mycourses" className="block hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md px-2 py-1">My Courses</Link>
-          <Link to="/admin-dashboard/createcourse" className="block hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md px-2 py-1">Create Course</Link>
-          <Link to="/admin-dashboard/settings" className="block hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md px-2 py-1">Settings</Link>
+          <Link to="/user-dashboard" className="block hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md px-2 py-1">Home</Link>
+          <Link to="/user-dashboard/mypurchased" className="block hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md px-2 py-1">My Purchased</Link>
         </nav>
       </aside>
 
@@ -38,10 +36,8 @@ function AdminDashborad() {
               ✕
             </button>
             <nav className="space-y-4">
-              <Link to="/admin-dashboard" className="block hover:text-blue-600 dark:hover:text-blue-400">Dashboard</Link>
-              <Link to="/admin-dashboard/mycourses" className="block hover:text-blue-600 dark:hover:text-blue-400">My Courses</Link>
-              <Link to="/admin-dashboard/createcourse" className="block hover:text-blue-600 dark:hover:text-blue-400">Create Course</Link>
-              <Link to="/admin-dashboard/settings" className="block hover:text-blue-600 dark:hover:text-blue-400">Settings</Link>
+              <Link to="/user-dashboard" className="block hover:text-blue-600 dark:hover:text-blue-400">Dashboard</Link>
+              <Link to="/user-dashboard/mypurchased" className="block hover:text-blue-600 dark:hover:text-blue-400">My Purchased</Link>
             </nav>
           </aside>
         </div>
@@ -66,4 +62,4 @@ function AdminDashborad() {
   );
 }
 
-export default AdminDashborad
+export default UserDashboard;

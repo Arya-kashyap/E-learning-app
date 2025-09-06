@@ -1,22 +1,56 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { toast } from 'react-hot-toast';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 
 const CreateCourse = () => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    category: '',
-    image: '',
-  })
+    price: '',
+  });
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value })
-  }
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    console.log('Course Created:', formData)
-    // Add API call or toast here
-  }
+  const handleChange = e => {
+    setFormData(prev => ({
+      ...prev,
+      [e.target.name]: e.target.value
+    }));
+  };
+
+  const handleCreateCourse = async (e) => {
+    e.preventDefault();
+
+    const admin = JSON.parse(localStorage.getItem("admin"));
+    const token = admin?.token;
+    if (!token) {
+      navigate("/admin/login");
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        `${BACKEND_URL}/api/course/create`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true,
+        }
+      );
+
+      toast.success(response.data.message || "Course created successfully");
+      navigate("/admin-dashboard/mycourses");
+      setFormData({ title: '', description: '', price: '' });
+    } catch (error) {
+      console.log(error);
+      toast.error(error.response?.data?.errors || "Something went wrong");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-800 py-12 px-4 sm:px-6 lg:px-8">
@@ -25,7 +59,7 @@ const CreateCourse = () => {
           Create New Course
         </h2>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleCreateCourse} className="space-y-6">
           {/* Title */}
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -56,36 +90,17 @@ const CreateCourse = () => {
             />
           </div>
 
-          {/* Category */}
+          {/* Price */}
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Category
-            </label>
-            <select
-              name="category"
-              value={formData.category}
-              onChange={handleChange}
-              required
-              className="mt-1 block w-full px-4 py-2 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">Select a category</option>
-              <option value="frontend">Frontend</option>
-              <option value="backend">Backend</option>
-              <option value="fullstack">Full Stack</option>
-              <option value="design">UI/UX Design</option>
-            </select>
-          </div>
-
-          {/* Image URL */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Course Banner Image URL
+              Price
             </label>
             <input
-              type="text"
-              name="image"
-              value={formData.image}
+              type="number"
+              name="price"
+              value={formData.price}
               onChange={handleChange}
+              required
               className="mt-1 block w-full px-4 py-2 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -102,7 +117,7 @@ const CreateCourse = () => {
         </form>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default CreateCourse
+export default CreateCourse;

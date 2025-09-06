@@ -1,13 +1,13 @@
+
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 
-function CourseCard() {
-
+function UserHome() {
+  const [loading, setLoading] = useState(true);
   const [courses, setCourses] = useState([])
-  
-  
+
   useEffect(()=>{
     const fetchCourses =async () => {
     try {
@@ -17,20 +17,20 @@ function CourseCard() {
         }
       );
       console.log(response.data);
-      
       setCourses(response.data)
+      setLoading(false)
     } catch (error) {
       console.log("error in fetchCourses", error);
     }
   }
   fetchCourses()
   },[])
-  
+
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 py-6 px-4 sm:px-6 lg:px-8 transition-colors duration-300">
-      <div className="max-w-7xl mx-auto">
-        <h2 className="text-3xl font-extrabold text-center text-blue-700 dark:text-white mb-8">
-          Courses
+    <div className="min-h-screen w-full bg-gray-100 dark:bg-gray-900 mt-12">
+      <div className="max-w-7xl mx-auto pt-10 px-4 sm:px-6 lg:px-8">
+        <h2 className="text-3xl font-extrabold text-center text-blue-700 dark:text-blue-400 mb-8">
+          All Courses
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
@@ -52,7 +52,7 @@ function CourseCard() {
                   {card.description}
                 </p>
                 <Link to={`/course-detail/${card._id}`}>
-                  <button className="mt-4 text-sm px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors duration-200">
+                  <button className="mt-4 text-sm px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded transition duration-200">
                     Learn More
                   </button>
                 </Link>
@@ -65,4 +65,4 @@ function CourseCard() {
   );
 }
 
-export default CourseCard
+export default UserHome

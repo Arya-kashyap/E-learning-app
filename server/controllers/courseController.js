@@ -1,50 +1,33 @@
 import { Course } from "../models/courseModel.js";
 import { Purchase } from "../models/purchaseModel.js";
-// import {v2 as cloudinary} from 'cloudinary'
+import dotenv from 'dotenv'
+dotenv.config();
+import Stripe from 'stripe'
+const stripe = Stripe(process.env.STRIPE_SECRET_KEY); // or your actual key
+
 
 export const createCourse = async (req, res) => {
-     const adminId = req.adminId
-     const { title, description, price } = req.body;
+  const adminId = req.adminId;
+  const { title, description, price } = req.body;
 
-     try {
-          if (!title || !description || !price) {
-               return res.status(400).json({ error: "all fields are require" })
-          }
+  try {
+    if (!title || !description || !price) {
+      return res.status(400).json({ errors: "All fields are required" });
+    }
 
-          // const {image} = req.files
-          // if(!req.files || Object.keys(req.files).length===0){
-          //      return res.status(400).json({message:"no file uploaded"});
-          // }
+    const course = new Course({
+      title,
+      description,
+      price,
+      creatorId: adminId,
+    });
 
-          // const allowedFormate = ["image/png", "image/jpeg"]
-          // if(!allowedFormate.includes(image.mimetype)){
-          //      return res.status(400).json({error:"invalid formate"})
-          // }
-
-          // const cloud_response = await cloudinary.uploader.upload(image.useTempFiles)
-          // if(!cloud_response || cloud_response.error){
-          //      res.status(400).json({error:"error uploading file"});
-          // }
-
-          const courseData = {
-               title: title,
-               description: description,
-               price: price,
-               // image:{
-               //      public_id: cloud_response.public_id,
-               //      url: cloud_response.url,
-               // },
-               creatorId: adminId
-          }
-
-          const course = await Course.create(courseData);
-          res.json({
-               messege: "course create successfully",
-               course
-          })
-     } catch (error) {
-          console.log(error)
-     }
+    await course.save();
+    res.status(201).json({ message: 'Course created successfully', course });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ errors: "Server error" });
+  }
 };
 
 export const updataCourse = async (req, res) => {
@@ -60,7 +43,7 @@ export const updataCourse = async (req, res) => {
                description,
                price,
           });
-          res.status(201).json({ messege: "course update successfully" })
+          res.status(201).json({ message: "course update successfully" })
      } catch (error) {
           console.log("error in course update");
 
@@ -76,7 +59,7 @@ export const deleteCourse = async (req, res) => {
                creatorId: adminId
           });
           if (!course) {
-               return res.json({ messege: "course not found" })
+               return res.json({ errors: "course not found" })
           }
           res.status(201).json({ message: "course delete successfully" })
      } catch (error) {
@@ -91,6 +74,7 @@ export const getCourse = async (req, res) => {
           res.status(201).json(courses);
      } catch (error) {
           console.log("error in course find", error);
+          res.status(400).json({ errors: "error in course find" });
 
      }
 }
@@ -102,36 +86,49 @@ export const courseDetails = async (req, res) => {
                _id: courseId
           });
           if (!course) {
-               return res.status(400).json({ message: "course not found" })
+               return res.status(400).json({ errors: "course not found" })
           }
           res.status(201).json(course);
      } catch (error) {
           console.log("error in course detail");
+          res.status(400).json({ errors: "error in course detail" });
 
      }
 }
+
 
 export const buyCourse = async (req, res) => {
      const { userId } = req;
      const { courseId } = req.params;
+
      try {
           const course = await Course.findById(courseId);
           if (!course) {
-               return res.status(400).json({ error: "Course not found" });
+               return res.status(404).json({ errors: "Course not found" });
           }
-
           const existingPurchase = await Purchase.findOne({ userId, courseId });
           if (existingPurchase) {
-               return res.status(400).json({ error: "user already purchased this course" });
+               return res
+                    .status(400)
+                    .json({ errors: "User has already purchased this course" });
           }
-          
-          const newPurchase = new Purchase({ userId, courseId });
-          await newPurchase.save();
-          res.status(200).json({ messege: "course purchased successfully", newPurchase })
-     } catch (error) {
-          res.status(400).json({ error: "error in course buy" })
-          console.log(error, "error in course buy");
 
+          // stripe payment code goes here!!
+          const amount = course.price;
+          const paymentIntent = await stripe.paymentIntents.create({
+               amount: amount,
+               currency: "usd",
+               payment_method_types: ["card"],
+          });
+
+          res.status(201).json({
+               message: "Course purchased successfully",
+               course,
+               clientSecret: paymentIntent.client_secret,
+          });
+     } catch (error) {
+          res.status(500).json({ errors: "Error in course buying" });
+          console.log("error in course buying ", error);
      }
-}
+};
 
