@@ -1,7 +1,8 @@
 import jwt from 'jsonwebtoken';
 import { JWT_ADMIN_PASSWORD } from '../config.js';
+import { connectDB } from '../utils/dbConnect.js';
 
-function adminMiddleware(req, res, next) {
+const adminMiddleware = async (req, res, next) => {
      const authHeader = req.headers.authorization;
      if (!authHeader || !authHeader.startsWith("Bearer ")) {
           return res.status(401).json({ error: "No token provided" });
@@ -9,6 +10,7 @@ function adminMiddleware(req, res, next) {
      
      const token = authHeader.split(" ")[1];
      try {
+          await connectDB();
           const decoded = jwt.verify(token, JWT_ADMIN_PASSWORD)
           console.log(decoded.id)
           req.adminId = decoded.id

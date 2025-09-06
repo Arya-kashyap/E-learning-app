@@ -1,7 +1,8 @@
 import jwt from 'jsonwebtoken';
 import { JWT_USER_PASSWORD } from '../config.js';
+import { connectDB } from '../utils/dbConnect.js';
 
-function userMiddleware(req, res, next) {
+const userMiddleware = async (req, res, next) => {
      const authHeader = req.headers.authorization;
 
      if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -10,6 +11,7 @@ function userMiddleware(req, res, next) {
      
      const token = authHeader.split(" ")[1];
      try {
+          await connectDB();
           const decoded = jwt.verify(token, JWT_USER_PASSWORD)
           req.userId = decoded.id
           next();

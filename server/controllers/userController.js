@@ -4,11 +4,13 @@ import { JWT_USER_PASSWORD } from "../config.js";
 import jwt from 'jsonwebtoken';
 import { Course } from "../models/courseModel.js";
 import { Purchase } from "../models/purchaseModel.js";
+import { connectDB } from '../utils/dbConnect.js';
 
 export const userSignup = async (req, res) => {
      const { firstName, lastName, email, password } = req.body;
      const hashPassword = await bcrypt.hash(password, 10);
      try {
+          await connectDB();
           if (!firstName || !lastName || !email || !password) {
                return res.status(400).json({ errors: "all field are required" })
           }
@@ -37,6 +39,7 @@ export const userSignup = async (req, res) => {
 export const userLogin = async (req, res) => {
      const { email, password } = req.body;
      try {
+          await connectDB();
           const user = await User.findOne({ email: email });
           if(!user){
                return res.status(403).json({ errors: "User not found" });
@@ -71,6 +74,7 @@ export const userLogin = async (req, res) => {
 
 export const userLogout = async (req, res) => {
      try {
+          await connectDB();
           res.clearCookie("jwt");
           res.status(200).json({ message: "Logout successfully" });
      } catch (error) {
@@ -82,6 +86,7 @@ export const userLogout = async (req, res) => {
 export const purchasedCourse = async (req, res) => {
      const userId = req.userId;
      try {
+          await connectDB();
           const purchase = await Purchase.find({ userId })
           let purchasedCourseId = []
           for (let i = 0; i < purchase.length; i++) {

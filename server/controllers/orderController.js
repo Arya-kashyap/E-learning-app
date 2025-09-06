@@ -1,9 +1,11 @@
 import { Order } from "../models/orderModel.js";
 import { Purchase } from "../models/purchaseModel.js";
+import { connectDB } from '../utils/dbConnect.js';
 
 export const orderData = async (req, res) => {
   const order = req.body;
   try {
+    await connectDB();
     const orderInfo = await Order.create(order);
     console.log(orderInfo);
     const userId = orderInfo?.userId;

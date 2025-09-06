@@ -7,6 +7,7 @@ import adminRoute from './routes/adminRoute.js';
 import orderRoute from './routes/orderRoute.js';
 import fileUpload from 'express-fileupload';
 import cookieParser from 'cookie-parser';
+import { connectDB } from './utils/dbConnect.js';
 import cors from 'cors';
 
 const app = express();
@@ -27,15 +28,7 @@ app.use(cors({
   allowedHeaders: ["Content-Type", "Authorization"],
 }));
 
-const port = process.env.PORT || 3000;
-const mongodb_url = process.env.MONGODB_URL;
-
-try {
-  await mongoose.connect(mongodb_url);
-  console.log("MongoDB Connected");
-} catch (error) {
-  console.log(error);
-}
+await connectDB();
 
 // Routes
 app.use("/api/course", courseRoute);

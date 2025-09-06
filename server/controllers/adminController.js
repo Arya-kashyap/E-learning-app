@@ -3,11 +3,13 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { JWT_ADMIN_PASSWORD } from '../config.js'
 import { Course } from "../models/courseModel.js";
+import { connectDB } from '../utils/dbConnect.js';
 
 export const adminSignup = async (req, res) => {
      const { firstName, lastName, email, password } = req.body;
      const hashPassword = await bcrypt.hash(password, 10);
      try {
+          await connectDB();
           if (!firstName || !lastName || !email || !password) {
                return res.status(400).json({ errors: "all field are required" })
           }
@@ -35,6 +37,7 @@ export const adminSignup = async (req, res) => {
 export const adminLogin = async (req, res) => {
      const { email, password } = req.body;
      try {
+          await connectDB();
           const user = await Admin.findOne({ email: email });
           if(!user){
                return res.status(400).json({ errors: "Admin not found" });
@@ -71,6 +74,7 @@ export const adminCourses = async (req, res) => {
      const creatorId = req.adminId;
      console.log(creatorId, "creatorId");
   try {
+     await connectDB();
     const courses = await Course.find({ creatorId });
 
     if (!courses || courses.length === 0) {
@@ -86,6 +90,7 @@ export const adminCourses = async (req, res) => {
 
 export const adminLogout = async (req, res) => {
      try {
+          await connectDB();
           // if(!req.cookies.jwt){
           //      return res.status(400).json({error: "Login first"})
           // }

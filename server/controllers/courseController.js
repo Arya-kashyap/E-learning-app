@@ -1,5 +1,6 @@
 import { Course } from "../models/courseModel.js";
 import { Purchase } from "../models/purchaseModel.js";
+import { connectDB } from '../utils/dbConnect.js';
 import dotenv from 'dotenv'
 dotenv.config();
 import Stripe from 'stripe'
@@ -11,6 +12,7 @@ export const createCourse = async (req, res) => {
   const { title, description, price } = req.body;
 
   try {
+     await connectDB();
     if (!title || !description || !price) {
       return res.status(400).json({ errors: "All fields are required" });
     }
@@ -35,6 +37,10 @@ export const updataCourse = async (req, res) => {
      const { courseId } = req.params;
      const { title, description, price } = req.body;
      try {
+          await connectDB();
+          if (!title || !description || !price) {
+               return res.status(400).json({ errors: "all field are required" })
+          }
           const course = await Course.updateOne({
                _id: courseId,
                creatorId: adminId
@@ -54,6 +60,7 @@ export const deleteCourse = async (req, res) => {
      const adminId = req.adminId;
      const { courseId } = req.params;
      try {
+          await connectDB();
           const course = await Course.findOneAndDelete({
                _id: courseId,
                creatorId: adminId
@@ -70,6 +77,7 @@ export const deleteCourse = async (req, res) => {
 
 export const getCourse = async (req, res) => {
      try {
+          await connectDB();
           const courses = await Course.find({})
           res.status(201).json(courses);
      } catch (error) {
@@ -82,6 +90,7 @@ export const getCourse = async (req, res) => {
 export const courseDetails = async (req, res) => {
      const { courseId } = req.params;
      try {
+          await connectDB();
           const course = await Course.findById({
                _id: courseId
           });
@@ -102,6 +111,7 @@ export const buyCourse = async (req, res) => {
      const { courseId } = req.params;
 
      try {
+          await connectDB();
           const course = await Course.findById(courseId);
           if (!course) {
                return res.status(404).json({ errors: "Course not found" });
