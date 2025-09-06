@@ -1,23 +1,49 @@
 import jwt from 'jsonwebtoken';
-import { JWT_ADMIN_PASSWORD } from '../config.js';
-import { connectDB } from '../utils/connectDB.js';
+import dotenv from "dotenv";
+dotenv.config();
+const JWT_ADMIN_PASSWORD = process.env.JWT_ADMIN_PASSWORD;
 
-const adminMiddleware = async (req, res, next) => {
-     const authHeader = req.headers.authorization;
-     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-          return res.status(401).json({ error: "No token provided" });
-     }
-     
-     const token = authHeader.split(" ")[1];
-     try {
-          await connectDB();
-          const decoded = jwt.verify(token, JWT_ADMIN_PASSWORD)
-          console.log(decoded.id)
-          req.adminId = decoded.id
-          next();
-     } catch (error) {
-          return res.status(400).json({ error: "Invalid token or expired" })
-          console.log("Invalid token or expired");
-     }
-}
+/**
+ * Middleware to authenticate admin via JWT.
+ * Verifies token and attaches `adminId` to `req` if valid.
+ * Designed for serverless environments like Vercel.
+ */
+const adminMiddleware = (req, res, next) => {
+  // 🔐 Extract Authorization header
+  const authHeader = req.headers.authorization;
+
+  // ✅ Check if header exists and starts with "Bearer "
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ errors: "No token provided in Authorization header" });
+  }
+
+  // 🎯 Extract token from "Bearer <token>"
+  const token = authHeader.split(" ")[1];
+
+  // ✅ Check if token is non-empty
+  if (!token || token.trim() === "") {
+    return res.status(401).json({ errors: "Token is missing or malformed" });
+  }
+
+  try {
+    // 🧠 Verify token using admin secret
+    const decoded = jwt.verify(token, JWT_ADMIN_PASSWORD);
+
+    // ✅ Ensure decoded payload contains admin ID
+    if (!decoded?.id) {
+      return res.status(403).json({ errors: "Token payload missing admin ID" });
+    }
+
+    // 🧾 Attach admin ID to request object for downstream use
+    req.adminId = decoded.id;
+
+    // 🚀 Proceed to next middleware or route
+    next();
+  } catch (error) {
+    // ❌ Token verification failed
+    console.error("JWT verification failed:", error.message);
+    return res.status(401).json({ errors: "Invalid or expired token" });
+  }
+};
+
 export default adminMiddleware;
