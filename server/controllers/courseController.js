@@ -1,6 +1,6 @@
 import { Course } from "../models/courseModel.js";
 import { Purchase } from "../models/purchaseModel.js";
-import { connectDB } from '../utils/dbConnect.js';
+import { connectDB } from '../utils/connectDB.js';
 import dotenv from 'dotenv'
 dotenv.config();
 import Stripe from 'stripe'

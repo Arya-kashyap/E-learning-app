@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { JWT_ADMIN_PASSWORD } from '../config.js'
 import { Course } from "../models/courseModel.js";
-import { connectDB } from '../utils/dbConnect.js';
+import { connectDB } from '../utils/connectDB.js';
 
 export const adminSignup = async (req, res) => {
      const { firstName, lastName, email, password } = req.body;

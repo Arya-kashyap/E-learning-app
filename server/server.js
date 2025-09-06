@@ -7,7 +7,7 @@ import adminRoute from './routes/adminRoute.js';
 import orderRoute from './routes/orderRoute.js';
 import fileUpload from 'express-fileupload';
 import cookieParser from 'cookie-parser';
-import { connectDB } from './utils/dbConnect.js';
+import { connectDB } from './utils/connectDB.js';
 import cors from 'cors';
 
 const app = express();
@@ -36,8 +36,12 @@ app.use("/api/user", userRoute);
 app.use("/api/admin", adminRoute);
 app.use("/api/order", orderRoute);
 
-// app.listen(port, () => {
-//   console.log(`Server started on port ${port}`);
-// });
+// // Optional: Local dev server
+// if (process.env.NODE_ENV !== 'production') {
+//   const PORT = process.env.PORT || 4000;
+//   app.listen(PORT, () => {
+//     console.log(`🚀 Server running locally at http://localhost:${PORT}`);
+//   });
+// }
 
 export default app;

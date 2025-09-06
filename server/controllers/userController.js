@@ -4,7 +4,7 @@ import { JWT_USER_PASSWORD } from "../config.js";
 import jwt from 'jsonwebtoken';
 import { Course } from "../models/courseModel.js";
 import { Purchase } from "../models/purchaseModel.js";
-import { connectDB } from '../utils/dbConnect.js';
+import { connectDB } from '../utils/connectDB.js';
 
 export const userSignup = async (req, res) => {
      const { firstName, lastName, email, password } = req.body;

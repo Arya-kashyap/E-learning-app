@@ -1,6 +1,6 @@
 import { Order } from "../models/orderModel.js";
 import { Purchase } from "../models/purchaseModel.js";
-import { connectDB } from '../utils/dbConnect.js';
+import { connectDB } from '../utils/connectDB.js';
 
 export const orderData = async (req, res) => {
   const order = req.body;

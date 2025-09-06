@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { JWT_USER_PASSWORD } from '../config.js';
-import { connectDB } from '../utils/dbConnect.js';
+import { connectDB } from '../utils/connectDB.js';
 
 const userMiddleware = async (req, res, next) => {
      const authHeader = req.headers.authorization;

@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { JWT_ADMIN_PASSWORD } from '../config.js';
-import { connectDB } from '../utils/dbConnect.js';
+import { connectDB } from '../utils/connectDB.js';
 
 const adminMiddleware = async (req, res, next) => {
      const authHeader = req.headers.authorization;
