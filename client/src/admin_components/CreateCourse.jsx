@@ -5,6 +5,7 @@ import { toast } from 'react-hot-toast';
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 
 const CreateCourse = () => {
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -31,6 +32,7 @@ const CreateCourse = () => {
     }
 
     try {
+      setLoading(true)
       const response = await axios.post(
         `${BACKEND_URL}/api/course/create`,
         formData,
@@ -44,6 +46,7 @@ const CreateCourse = () => {
       );
 
       toast.success(response.data.message || "Course created successfully");
+      setLoading(false)
       navigate("/admin-dashboard/mycourses");
       setFormData({ title: '', description: '', price: '' });
     } catch (error) {
@@ -111,7 +114,7 @@ const CreateCourse = () => {
               type="submit"
               className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-md transition duration-200"
             >
-              Create Course
+              {loading ? "Creating..." : "Create Course"}
             </button>
           </div>
         </form>
