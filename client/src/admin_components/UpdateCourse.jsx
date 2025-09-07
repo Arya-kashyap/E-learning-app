@@ -7,6 +7,7 @@ const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 
 const UpdateCourse = () => {
   const { courseId } = useParams();
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -55,6 +56,7 @@ const handleUpdateCourse = async (e) => {
     return;
   }
   try {
+    setLoading(true)
     const response = await axios.put(
       `${BACKEND_URL}/api/course/update/${courseId}`,
       formData,
@@ -67,6 +69,7 @@ const handleUpdateCourse = async (e) => {
       }
     );
     toast.success(response.data.message || "Course updated successfully");
+    setLoading(false)
     navigate("/admin-dashboard/mycourses");
     setFormData({ title: '', description: '', price: '' });
   } catch (error) {
@@ -133,7 +136,7 @@ return (
             type="submit"
             className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-md transition duration-200"
           >
-            Update Course
+            {loading ? "Updating..." : "Update Course"}
           </button>
         </div>
       </form>

@@ -10,7 +10,7 @@ export const orderData = async (req, res) => {
 
   // ✅ Validate required fields
   if (!order?.userId || !order?.courseId) {
-    return res.status(400).json({ error: "Missing userId or courseId in request body" });
+    return res.status(400).json({ errors: "Missing userId or courseId in request body" });
   }
 
   try {
@@ -19,7 +19,7 @@ export const orderData = async (req, res) => {
 
     // ✅ Defensive check
     if (!orderInfo || !orderInfo.userId || !orderInfo.courseId) {
-      return res.status(500).json({ error: "Order creation failed" });
+      return res.status(500).json({ errors: "Order creation failed" });
     }
 
     // 🎯 Create purchase record
@@ -35,6 +35,6 @@ export const orderData = async (req, res) => {
     });
   } catch (error) {
     console.error("❌ Error in order creation:", error);
-    res.status(500).json({ error: "Internal server error during order processing" });
+    res.status(500).json({ errors: "Internal server error during order processing" });
   }
 };

@@ -16,14 +16,14 @@ export const userSignup = async (req, res) => {
 
   // ✅ Validate input
   if (!firstName || !lastName || !email || !password) {
-    return res.status(400).json({ error: "All fields are required" });
+    return res.status(400).json({ errors: "All fields are required" });
   }
 
   try {
     // 🔍 Check if user already exists
     const userAlreadyExist = await User.findOne({ email });
     if (userAlreadyExist) {
-      return res.status(409).json({ error: "User already exists" });
+      return res.status(409).json({ errors: "User already exists" });
     }
 
     // 🔐 Hash password
@@ -40,7 +40,7 @@ export const userSignup = async (req, res) => {
     res.status(201).json({ message: "User signed up successfully", user });
   } catch (error) {
     console.error("Signup error:", error);
-    res.status(500).json({ error: "Internal server error during signup" });
+    res.status(500).json({ errors: "Internal server error during signup" });
   }
 };
 
@@ -53,20 +53,20 @@ export const userLogin = async (req, res) => {
 
   // ✅ Validate input
   if (!email || !password) {
-    return res.status(400).json({ error: "Email and password are required" });
+    return res.status(400).json({ errors: "Email and password are required" });
   }
 
   try {
     // 🔍 Find user
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(404).json({ errors: "User not found" });
     }
 
     // 🔐 Compare password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return res.status(401).json({ error: "Invalid credentials" });
+      return res.status(401).json({ errors: "Invalid credentials" });
     }
 
     // 🧠 Generate JWT
@@ -86,7 +86,7 @@ export const userLogin = async (req, res) => {
     res.status(200).json({ message: "Login successful", user, token });
   } catch (error) {
     console.error("Login error:", error);
-    res.status(500).json({ error: "Internal server error during login" });
+    res.status(500).json({ errors: "Internal server error during login" });
   }
 };
 
@@ -104,7 +104,7 @@ export const userLogout = async (req, res) => {
     res.status(200).json({ message: "Logout successful" });
   } catch (error) {
     console.error("Logout error:", error);
-    res.status(500).json({ error: "Internal server error during logout" });
+    res.status(500).json({ errors: "Internal server error during logout" });
   }
 };
 
@@ -133,6 +133,6 @@ export const purchasedCourse = async (req, res) => {
     });
   } catch (error) {
     console.error("Purchased course error:", error);
-    res.status(500).json({ error: "Internal server error fetching courses" });
+    res.status(500).json({ errors: "Internal server error fetching courses" });
   }
 };

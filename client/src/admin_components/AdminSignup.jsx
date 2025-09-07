@@ -6,6 +6,7 @@ const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 
 function AdminSignup() {
   const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({ firstName: "", lastName: "", email: "", password: "" });
   const navigate = useNavigate()
 
@@ -16,6 +17,7 @@ function AdminSignup() {
     e.preventDefault();
     // Handle signup logic here
     try {
+      setLoading(true)
       const response = await axios.post(`${BACKEND_URL}/api/admin/signup`,
         {
           firstName: formData.firstName,
@@ -30,6 +32,7 @@ function AdminSignup() {
       )
       console.log(response.data)
       toast.success("signup successfull")
+      setLoading(false)
       navigate('/admin/login')
     } catch (error) {
       if(error.response){
@@ -114,7 +117,7 @@ function AdminSignup() {
             type="submit"
             className="w-full bg-blue-600 dark:bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors duration-200"
           >
-            Sign Up
+            {loading ? "Signing Up..." : "Sign Up"}
           </button>
         </form>
 

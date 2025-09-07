@@ -4,28 +4,30 @@ import { Link } from 'react-router-dom'
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 
 function CourseCard() {
-
+  const [loading, setLoading] = useState(false)
   const [courses, setCourses] = useState([])
-  
-  
-  useEffect(()=>{
-    const fetchCourses =async () => {
-    try {
-      const response = await axios.get(`${BACKEND_URL}/api/course/courses`,
-        {
-          withCredentials: true
-        }
-      );
-      console.log(response.data);
-      
-      setCourses(response.data)
-    } catch (error) {
-      console.log("error in fetchCourses", error);
+
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(`${BACKEND_URL}/api/course/courses`,
+          {
+            withCredentials: true
+          }
+        );
+        console.log(response.data);
+        setCourses(response.data)
+        setLoading(false);
+
+      } catch (error) {
+        console.log("error in fetchCourses", error);
+      }
     }
-  }
-  fetchCourses()
-  },[])
-  
+    fetchCourses()
+  }, [])
+
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 py-6 px-4 sm:px-6 lg:px-8 transition-colors duration-300">
       <div className="max-w-7xl mx-auto">
@@ -33,33 +35,46 @@ function CourseCard() {
           Courses
         </h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-          {courses.map((card, index) => (
-            <div
-              key={index}
-              className="bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-lg transition-all duration-300"
-            >
-              <img
-                src={card.image}
-                alt={card.title}
-                className="w-full h-48 object-cover rounded-t-lg"
-              />
-              <div className="p-6">
-                <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400 mb-2">
-                  {card.title}
-                </h3>
-                <p className="text-gray-700 dark:text-gray-300 text-sm">
-                  {card.description}
-                </p>
-                <Link to={`/course-detail/${card._id}`}>
-                  <button className="mt-4 text-sm px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors duration-200">
-                    Learn More
-                  </button>
-                </Link>
-              </div>
-            </div>
-          ))}
-        </div>
+        {loading ? (
+          <div className="text-center text-gray-500 dark:text-gray-400">Loading courses...</div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+            {courses && courses.length > 0 ? (
+              courses.map((card, index) => (
+                <div
+                  key={index}
+                  className="bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-lg transition-all duration-300"
+                >
+                  <img
+                    src={card.image}
+                    alt={card.title}
+                    className="w-full h-48 object-cover rounded-t-lg"
+                  />
+                  <div className="p-6">
+                    <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400 mb-2">
+                      {card.title}
+                    </h3>
+                    <p className="text-gray-700 dark:text-gray-300 text-sm">
+                      {card.description.length > 40
+                        ? `${card.description.slice(0, 40)}...`
+                        : card.description}
+                    </p>
+                    <Link to={`/course-detail/${card._id}`}>
+                      <button className="mt-4 text-sm px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors duration-200">
+                        Learn More
+                      </button>
+                    </Link>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p className="text-center text-gray-500 dark:text-gray-400 col-span-full">
+                No courses available
+              </p>
+            )}
+          </div>
+
+        )}
       </div>
     </div>
   );

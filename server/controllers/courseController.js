@@ -15,7 +15,7 @@ export const createCourse = async (req, res) => {
   const { title, description, price } = req.body;
 
   if (!title || !description || !price) {
-    return res.status(400).json({ error: "All fields are required" });
+    return res.status(400).json({ errors: "All fields are required" });
   }
 
   try {
@@ -29,7 +29,7 @@ export const createCourse = async (req, res) => {
     res.status(201).json({ message: "Course created successfully", course });
   } catch (error) {
     console.error("Create course error:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ errors: "Internal server error" });
   }
 };
 
@@ -43,7 +43,7 @@ export const updateCourse = async (req, res) => {
   const { title, description, price } = req.body;
 
   if (!title || !description || !price) {
-    return res.status(400).json({ error: "All fields are required" });
+    return res.status(400).json({ errors: "All fields are required" });
   }
 
   try {
@@ -53,13 +53,13 @@ export const updateCourse = async (req, res) => {
     );
 
     if (result.modifiedCount === 0) {
-      return res.status(404).json({ error: "Course not found or not authorized" });
+      return res.status(404).json({ errors: "Course not found or not authorized" });
     }
 
     res.status(200).json({ message: "Course updated successfully" });
   } catch (error) {
     console.error("Update course error:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ errors: "Internal server error" });
   }
 };
 
@@ -78,13 +78,13 @@ export const deleteCourse = async (req, res) => {
     });
 
     if (!course) {
-      return res.status(404).json({ error: "Course not found or not authorized" });
+      return res.status(404).json({ errors: "Course not found or not authorized" });
     }
 
     res.status(200).json({ message: "Course deleted successfully" });
   } catch (error) {
     console.error("Delete course error:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ errors: "Internal server error" });
   }
 };
 
@@ -98,7 +98,7 @@ export const getCourse = async (req, res) => {
     res.status(200).json(courses);
   } catch (error) {
     console.error("Get courses error:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ errors: "Internal server error" });
   }
 };
 
@@ -113,13 +113,13 @@ export const courseDetails = async (req, res) => {
     const course = await Course.findById(courseId);
 
     if (!course) {
-      return res.status(404).json({ error: "Course not found" });
+      return res.status(404).json({ errors: "Course not found" });
     }
 
     res.status(200).json(course);
   } catch (error) {
     console.error("Course detail error:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ errors: "Internal server error" });
   }
 };
 
@@ -134,12 +134,12 @@ export const buyCourse = async (req, res) => {
   try {
     const course = await Course.findById(courseId);
     if (!course) {
-      return res.status(404).json({ error: "Course not found" });
+      return res.status(404).json({ errors: "Course not found" });
     }
 
     const alreadyPurchased = await Purchase.findOne({ userId, courseId });
     if (alreadyPurchased) {
-      return res.status(409).json({ error: "Course already purchased" });
+      return res.status(409).json({ errors: "Course already purchased" });
     }
 
     // 💳 Create Stripe payment intent
@@ -156,6 +156,6 @@ export const buyCourse = async (req, res) => {
     });
   } catch (error) {
     console.error("Buy course error:", error);
-    res.status(500).json({ error: "Internal server error during purchase" });
+    res.status(500).json({ errors: "Internal server error during purchase" });
   }
 };

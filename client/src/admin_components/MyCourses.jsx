@@ -48,6 +48,7 @@ const MyCourses = () => {
       }
 
       try {
+        setLoading(true)
         const response = await axios.post(`${BACKEND_URL}/api/admin/courses`, {}, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -73,8 +74,12 @@ const MyCourses = () => {
           My Courses
         </h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {myCourses.map((course, index) => (
+        {loading ? (
+          <div className="text-center text-gray-500 dark:text-gray-400">Loading courses...</div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {myCourses && myCourses.length > 0 ? (
+            myCourses.map((course, index) => (
             <div
               key={index}
               className="bg-white dark:bg-gray-900 rounded-lg shadow hover:shadow-lg transition duration-300"
@@ -89,8 +94,10 @@ const MyCourses = () => {
                   {course.title}
                 </h3>
                 <p className="text-gray-700 dark:text-gray-300 text-sm">
-                  {course.description}
-                </p>
+                      {course.description.length > 40
+                        ? `${course.description.slice(0, 40)}...`
+                        : course.description}
+                    </p>
                 <div className="flex items-center justify-between mt-4">
                   <Link to={`/admin-dashboard/updatecourse/${course._id}`} className="mt-4 text-sm px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded transition duration-200">
                     Update
@@ -101,8 +108,12 @@ const MyCourses = () => {
                 </div>
               </div>
             </div>
-          ))}
+          ))
+          ) : (
+            <div className="text-center text-gray-500 dark:text-gray-400">No courses available.</div>
+          )}
         </div>
+        )}
       </div>
     </div>
   )

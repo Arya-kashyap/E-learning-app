@@ -32,37 +32,7 @@ function CourseDetail() {
   if (loading) return <div className="text-center py-10">Loading...</div>;
   if (!course) return <div className="text-center py-10">Course not found.</div>;
 
-  // const handlePurchase = async () => {
-  //   if (!user) {
-  //     toast.error("Please login to Purchase the courses")
-  //     return
-  //   }
-  //   try {
-  //     setLoading(true)
-  //     const response = await axios.post(`http://localhost:4001/api/course/buy/${courseId}`, {}, {
-  //       headers: {
-  //         Authorization: `Bearer ${user}`
-  //       },
-  //       withCredentials: true,
-  //     })
-  //     toast.success(response.data.message || "course Purchased successfully")
-  //     setLoading(false)
-  //     navigate('/user-dashboard/mypurchased')
-  //   } catch (error) {
-  //     console.log(error);
-
-  //     setLoading(false)
-  //     if (error.response?.status === 400) {
-  //       toast.error("you have already Purchased this course")
-  //       navigate('/user-dashboard/mypurchased')
-  //     } else {
-  //       toast.error(error?.response?.data?.errors)
-  //       console.log(error?.response?.data?.errors);
-
-  //     }
-  //   }
-  // }
-
+  
   return (
     <div className='h-screen w-full flex flex-col justify-center mt-4'>  
     <div className=" p-6 bg-white dark:bg-gray-900 rounded shadow">

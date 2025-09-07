@@ -1,5 +1,5 @@
 import React from 'react'
-import { Route, Routes } from 'react-router-dom'
+import { Route, Routes, useNavigate } from 'react-router-dom'
 import Navbar from './components/Navbar';
 import {Toaster} from 'react-hot-toast'
 import Signup from './pages/Signup';
@@ -23,6 +23,7 @@ import UpdateCourse from './admin_components/UpdateCourse';
 
 
 function App() {
+
   return (
     <div>
       <Navbar />

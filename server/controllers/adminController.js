@@ -15,14 +15,14 @@ export const adminSignup = async (req, res) => {
 
   // ✅ Validate input
   if (!firstName || !lastName || !email || !password) {
-    return res.status(400).json({ error: "All fields are required" });
+    return res.status(400).json({ errors: "All fields are required" });
   }
 
   try {
     // 🔍 Check if admin already exists
     const existingAdmin = await Admin.findOne({ email });
     if (existingAdmin) {
-      return res.status(409).json({ error: "Admin already exists" });
+      return res.status(409).json({ errors: "Admin already exists" });
     }
 
     // 🔐 Hash password
@@ -39,7 +39,7 @@ export const adminSignup = async (req, res) => {
     res.status(201).json({ message: "Admin signed up successfully", admin });
   } catch (error) {
     console.error("Signup error:", error);
-    res.status(500).json({ error: "Internal server error during signup" });
+    res.status(500).json({ errors: "Internal server error during signup" });
   }
 };
 
@@ -52,20 +52,20 @@ export const adminLogin = async (req, res) => {
 
   // ✅ Validate input
   if (!email || !password) {
-    return res.status(400).json({ error: "Email and password are required" });
+    return res.status(400).json({ errors: "Email and password are required" });
   }
 
   try {
     // 🔍 Find admin
     const admin = await Admin.findOne({ email });
     if (!admin) {
-      return res.status(404).json({ error: "Admin not found" });
+      return res.status(404).json({ errors: "Admin not found" });
     }
 
     // 🔐 Compare password
     const isPasswordValid = await bcrypt.compare(password, admin.password);
     if (!isPasswordValid) {
-      return res.status(401).json({ error: "Invalid credentials" });
+      return res.status(401).json({ errors: "Invalid credentials" });
     }
 
     // 🧠 Generate JWT
@@ -85,7 +85,7 @@ export const adminLogin = async (req, res) => {
     res.status(200).json({ message: "Login successful", admin, token });
   } catch (error) {
     console.error("Login error:", error);
-    res.status(500).json({ error: "Internal server error during login" });
+    res.status(500).json({ errors: "Internal server error during login" });
   }
 };
 
@@ -101,13 +101,13 @@ export const adminCourses = async (req, res) => {
     const courses = await Course.find({ creatorId });
 
     if (!courses || courses.length === 0) {
-      return res.status(404).json({ error: "No courses found for this admin" });
+      return res.status(404).json({ errors: "No courses found for this admin" });
     }
 
     res.status(200).json(courses);
   } catch (error) {
     console.error("Fetch admin courses error:", error);
-    res.status(500).json({ error: "Internal server error fetching courses" });
+    res.status(500).json({ errors: "Internal server error fetching courses" });
   }
 };
 
@@ -126,6 +126,6 @@ export const adminLogout = async (req, res) => {
     res.status(200).json({ message: "Logout successful" });
   } catch (error) {
     console.error("Logout error:", error);
-    res.status(500).json({ error: "Internal server error during logout" });
+    res.status(500).json({ errors: "Internal server error during logout" });
   }
 };

@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthProvider";
+import { FaHome } from "react-icons/fa";
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 
 function Navbar() {

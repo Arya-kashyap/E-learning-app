@@ -7,6 +7,7 @@ const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 
 function Login() {
   const {isloggedIn, setIsLoggedIn} = useAuth() 
+  const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [formData, setFormData] = useState({ email: "", password: "" });
   const navigate = useNavigate();
@@ -18,6 +19,7 @@ function Login() {
     e.preventDefault();
     // Handle signup logic here
     try {
+      setLoading(true)
       const response = await axios.post(`${BACKEND_URL}/api/user/login`,
         {
           email: formData.email,
@@ -30,6 +32,7 @@ function Login() {
       )
       console.log("successfull login", response.data);
       toast.success(response.data.message)
+      setLoading(false)
       setIsLoggedIn(true)
       localStorage.setItem("user", JSON.stringify(response.data))
       navigate('/')
@@ -84,7 +87,7 @@ function Login() {
             type="submit"
             className="w-full bg-blue-600 dark:bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors duration-200"
           >
-            Login
+            {loading ? "Logging In..." : "Login"}
           </button>
         </form>
 

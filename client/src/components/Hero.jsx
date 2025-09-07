@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthProvider";
 
 function Hero() {
+  const {isLoggedIn} = useAuth();
   return (
     <section className="flex mt-16 bg-blue-50 dark:bg-gray-900 transition-colors duration-300">
       <div className="flex flex-col justify-center items-center max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 text-center">
@@ -12,7 +14,7 @@ function Hero() {
         </p>
         <div className="mt-6">
           <Link
-            to="/user-dashboard"
+            to={isLoggedIn ? "/user-dashboard" : "/login"}
             className="inline-block bg-blue-600 dark:bg-blue-500 text-white px-6 py-3 rounded-md text-sm font-semibold hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors duration-200"
           >
             Get Started
